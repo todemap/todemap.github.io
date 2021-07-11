@@ -5,4 +5,4 @@
 
 特別架設網站提供免費的空白地圖讓大家下載
 
-歡迎追蹤 IG https://www.instagram.com/sixth.planet/
+歡迎追蹤 IG https://www.instagram.com/todemap/
