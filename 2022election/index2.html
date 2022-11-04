@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>我的2022選舉預測</title>
+    <script src="https://d3js.org/d3.v3.js"></script>
+    <script src="topojson.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            font-family: monospace
+        }
+
+        h1 {
+            font-size: 40px;
+            font-weight: 600;
+        }
+
+        .button {
+            color: white;
+            font-size: 30px;
+            font-weight: 600;
+            font-family: monospace;
+            width: 180px;
+            height: 60px;
+            padding: 0px 10px;
+            border-radius: 20px;
+            border: none;
+        }
+
+        .button:hover {
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .button:focus {
+            border-color: black;
+            border-width: 2px;
+            border-style: solid;
+        }
+
+        .taiwan {
+            fill: #cccccc
+        }
+
+        #KMT {
+            background-color: #2090E0
+        }
+
+        #DPP {
+            background-color: #6BC060
+        }
+
+        #TPP {
+            background-color: #20BAB5
+        }
+
+        #NOO {
+            background-color: #808080
+        }
+
+        #download {
+            background-color: #aaa;
+            color: white;
+            font-size: 20px;
+            font-family: monospace;
+            width: 100px;
+            height: 40px;
+            padding: 0px 10px;
+            border-radius: 15px;
+            border: none;
+        }
+
+        footer,
+        a {
+            color: #aaaaaa;
+            font-size: 20px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="umap">
+        <center>
+            <h1>我的2022選舉預測</h1>
+            <!--   <p>點擊政黨為各個縣市填色</p>-->
+        </center>
+
+        <!--  建立按鈕-->
+        <div>
+            <center>
+                <input type="button" value="國民黨" id="KMT" class="button" onclick="update('#2090E0')">
+                <input type="button" value="民進黨" id="DPP" class="button" onclick="update('#6BC060')">
+                <input type="button" value="民眾黨" id="TPP" class="button" onclick="update('#20BAB5')">
+                <input type="button" value="無黨" id="NOO" class="button" onclick="update('#808080')">
+            </center>
+
+        </div>
+        <center><svg id="svg" width="100%" height="1000"></svg></center>
+<!--        <input type="button" value="下載圖片" id="download" onclick="dld()">-->
+
+    </div>
+
+    <script>
+        //1地理資料檔: GeoJSON
+        d3.json("tw-geojson2.geojson", function(mapdata) {
+            bind(mapdata);
+            render();
+        });
+
+        function render() {
+            d3.selectAll("path")
+                .attr("fill", "#cccccc")
+                .attr("stroke", "white")
+                .attr("stroke-width", 1.5);
+        }
+
+        function update(color) {
+            d3.selectAll("path").on("click", function(d) {
+                d3.select(this).attr("fill", color)
+            });
+        }
+
+        //
+
+        function bind(geoRoot) {
+
+            // 2地理投影器: 設定投影方式(麥卡托)、定位點([經度,緯度])、縮放(scale)
+            var projection = d3.geo.mercator().center([121, 24]).scale(15000).translate([500, 400]);
+
+            // 3路徑產生器: d3.geo.path()
+            var path = d3.geo.path().projection(projection);
+
+            // 綁定path與載入的地理資料(features:每一地理區劃)
+            var selection = d3.select("svg").selectAll("path").data(geoRoot.features);
+            selection.enter().append("path").classed("map-boundary", true).attr("d", path);
+            selection.exit().remove();
+        }
+
+//        function dld() {
+//            let photo =document.getElementById('umap');
+//            html2canvas(photo).then(canvas=>{
+//                console.log(canvas);
+//                document.body.appendChild(canvas);
+//              return Canvas2Image.saveAsPNG(canvas);
+//            })
+//        };
+//        
+    </script>
+
+</body>
+<footer>
+    <center>
+        <p>此網頁由圖地製作，歡迎至 <a href="https://www.facebook.com/todemap/">Facebook</a>、<a href="https://www.instagram.com/todemap/">Instagram</a> 追蹤todemap</p>
+    </center>
+</footer>
+</html>
