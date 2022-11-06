@@ -6,10 +6,12 @@
     <script src="https://d3js.org/d3.v3.js"></script>
     <script src="topojson.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
+    <script src="canvas2image.js"></script>
 
     <style>
         body {
-            font-family: monospace
+            font-family: monospace;
+            background-color: #fcfcfc;
         }
 
         h1 {
@@ -60,15 +62,16 @@
         }
 
         #download {
-            background-color: #aaa;
-            color: white;
-            font-size: 20px;
+            background-color: #fff;
+            color: #aaa;
+            font-size: 21px;
             font-family: monospace;
-            width: 100px;
+            width: 110px;
             height: 40px;
             padding: 0px 10px;
             border-radius: 15px;
-            border: none;
+            border-color: #bbb;
+            border: solid;
         }
 
         footer,
@@ -84,10 +87,8 @@
     <div id="umap">
         <center>
             <h1>我的2022選舉預測</h1>
-            <!--   <p>點擊政黨為各個縣市填色</p>-->
         </center>
 
-        <!--  建立按鈕-->
         <div>
             <center>
                 <input type="button" value="國民黨" id="KMT" class="button" onclick="update('#2090E0')">
@@ -95,15 +96,13 @@
                 <input type="button" value="民眾黨" id="TPP" class="button" onclick="update('#20BAB5')">
                 <input type="button" value="無黨" id="NOO" class="button" onclick="update('#808080')">
             </center>
-
         </div>
         <center><svg id="svg" width="100%" height="1000"></svg></center>
-<!--        <input type="button" value="下載圖片" id="download" onclick="dld()">-->
-
     </div>
+       <p></p> <p></p>
+        <center><input type="button" value="儲存圖片" id="download" onclick="dld()"></center>
 
     <script>
-        //1地理資料檔: GeoJSON
         d3.json("tw-geojson2.geojson", function(mapdata) {
             bind(mapdata);
             render();
@@ -122,31 +121,24 @@
             });
         }
 
-        //
-
         function bind(geoRoot) {
 
-            // 2地理投影器: 設定投影方式(麥卡托)、定位點([經度,緯度])、縮放(scale)
             var projection = d3.geo.mercator().center([121, 24]).scale(15000).translate([550, 400]);
 
-            // 3路徑產生器: d3.geo.path()
             var path = d3.geo.path().projection(projection);
 
-            // 綁定path與載入的地理資料(features:每一地理區劃)
             var selection = d3.select("svg").selectAll("path").data(geoRoot.features);
             selection.enter().append("path").classed("map-boundary", true).attr("d", path);
             selection.exit().remove();
         }
 
-//        function dld() {
-//            let photo =document.getElementById('umap');
-//            html2canvas(photo).then(canvas=>{
-//                console.log(canvas);
-//                document.body.appendChild(canvas);
-//              return Canvas2Image.saveAsPNG(canvas);
-//            })
-//        };
-//        
+        function dld() {
+            let photo =document.getElementById('umap');
+            html2canvas(photo).then(canvas=>{
+                Canvas2Image.saveAsJPEG(canvas,canvas.width,canvas.height,"my2022");
+            })
+        };
+        
     </script>
 
 </body>
